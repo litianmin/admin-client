@@ -31,10 +31,15 @@ const user = {
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
 
-          console.log(response.data)
-          return
+          console.log(data)
 
           const data = response.data
+
+          if(data.code == 40000) {
+            console.log(data.msg)
+            return
+          }
+
           setToken(data.token)
           commit('SET_TOKEN', data.token)
           resolve()
