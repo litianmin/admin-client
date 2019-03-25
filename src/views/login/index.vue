@@ -6,7 +6,7 @@
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
+        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="账号" />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -17,7 +17,7 @@
           v-model="loginForm.password"
           name="password"
           auto-complete="on"
-          placeholder="password"
+          placeholder="密码"
           @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
@@ -39,7 +39,7 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
+      if (value.length == 0) {
         callback(new Error('请输入正确的用户名'))
       } else {
         callback()
@@ -54,8 +54,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

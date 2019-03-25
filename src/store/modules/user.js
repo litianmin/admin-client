@@ -3,7 +3,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    token: getToken(),
+    token: '',
     name: '',
     avatar: '',
     roles: []
@@ -30,18 +30,9 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
+          setToken(response.msg.token)
+          commit('SET_TOKEN', response.msg.token)
 
-          console.log(data)
-
-          const data = response.data
-
-          if(data.code == 40000) {
-            console.log(data.msg)
-            return
-          }
-
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
           resolve()
         }).catch(error => {
           reject(error)
@@ -51,6 +42,10 @@ const user = {
 
     // 获取用户信息
     GetInfo({ commit, state }) {
+
+      console.log("what the hell")
+      return
+
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
           const data = response.data
