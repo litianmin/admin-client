@@ -17,7 +17,7 @@
     <el-button size="small" slot="append" icon="el-icon-search"></el-button>
   </el-input>
 
-  <el-button icon="el-icon-circle-plus-outline" size="small" type="primary" style="margin-left:2rem;">
+  <el-button @click="createGame" icon="el-icon-circle-plus-outline" size="small" type="primary" style="margin-left:2rem;">
     新增游戏
   </el-button>
 
@@ -143,6 +143,9 @@
       }
     },
     methods: {
+      createGame () {
+        this.$router.push('/game/create')
+      },
       test(obj) {
         console.log(this.search_tp)
       }

@@ -52,6 +52,13 @@ export const constantRouterMap = [
         component: () => import('@/views/game/list/list'),
         meta: { title: '游戏列表', icon: 'list' }
       },
+      {
+        path: 'create',
+        name: 'create',
+        component: () => import('@/views/game/edit/create'),
+        meta: { title: '增加游戏', icon: 'create' },
+        hidden: true,
+      }
     ]
   },
 
