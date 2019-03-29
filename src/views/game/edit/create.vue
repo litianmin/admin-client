@@ -15,6 +15,7 @@
       <el-upload
         class="avatar-uploader"
         action="/api/upload"
+        :headers="myheader"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload">
@@ -69,7 +70,10 @@ export default {
       },
       imageUrl: '',
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      myheader: {
+        "self-token": 'sorry-ucantnontdothat'
+      }
     }
   },
   methods: {
