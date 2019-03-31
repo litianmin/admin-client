@@ -42,8 +42,6 @@ const user = {
 
     // 获取用户信息
     GetInfo({ commit, state }) {
-
-      console.log("what the hell")
       return
 
       return new Promise((resolve, reject) => {
