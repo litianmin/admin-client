@@ -20,7 +20,7 @@
         :show-file-list="false"
         :on-success="handleLogoSuccess"
         :before-upload="beforeImgUpload">
-        <img v-if="gameInfo.logoImg" :src="gameInfo.logoImg" class="avatar">
+        <img v-if="gameInfo.logoImg" :src="gameInfo.logo" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
@@ -66,12 +66,13 @@ export default {
       gameInfo: {
         name: '',
         platform: '',
+        logo: '',
         logoImg: '',
         logoMiniImg: '',
         downloadLink: '',
         briefDesc: ''
       },
-      myArr: {},
+      displayImgArr: {},
       uploadHeader: {
         "self-token": getToken()
       },
@@ -88,19 +89,32 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log(this.gameInfo.name)
-      console.log('submit!');
+      // 提交游戏基本信息
+      // console.log('游戏名称：'+this.gameInfo.name)
+      // console.log('游戏平台：'+this.gameInfo.platform)
+      // console.log('游戏logo原图：'+this.gameInfo.logoImg)
+      // console.log('游戏logo缩略图：'+this.gameInfo.logoMiniImg)
+      // console.log('游戏展示图：'+this.displayImgArr)
+      // console.log('游戏下载链接：'+this.gameInfo.downloadLink)
+      // console.log('游戏简单描述：'+this.gameInfo.briefDesc)
+      // console.log('submit!')
+
+      // 组装信息
+      let gameInfoPost = {}
+      let displayImgList = []
+      for(let k in this.displayImgArr) {
+        displayImgList.push(this.displayImgArr[k])
+      }
+      console.log(displayImgList)
     },
     handleLogoSuccess(res, file) {
-      console.log()
 
       // 结果返回代码和图片链接
-      // if(res.code == 20000) { // 上传成功，保存图片
-      //   this.gameInfo.logoImg = res.origin_img
-      //   this.gameInfo.logoMiniImg = res.mini_img
-      // }
-      // console.log(res)
-      this.gameInfo.logoImg = URL.createObjectURL(file.raw);
+      if(res.code == 20000) { // 上传成功，保存图片
+        this.gameInfo.logoImg = res.origin_img
+        this.gameInfo.logoMiniImg = res.mini_img
+      }
+      this.gameInfo.logo = URL.createObjectURL(file.raw);
     },
     beforeImgUpload(file) {
 
@@ -118,21 +132,21 @@ export default {
     },
     gameDisplayImgRemove(file, fileList) {
       console.log(file.uid)
-      for(let k in this.myArr) {
+      for(let k in this.displayImgArr) {
         console.log(k)
         if(file.uid == k) {
-          delete this.myArr[k]
+          delete this.displayImgArr[k]
         }
       }
-      console.log(this.myArr)
+      console.log(this.displayImgArr)
     },
     gameDisplayImgPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
     gameDisplayImgSuccess(res, file) {
-      this.myArr[file.uid] = res.mini_img
-      console.log(this.myArr)
+      this.displayImgArr[file.uid] = res.mini_img
+      console.log(this.displayImgArr)
     }
 
   }
