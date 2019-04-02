@@ -16,6 +16,7 @@
         class="avatar-uploader"
         action="/api/upload"
         :headers="uploadHeader"
+        :data="logoImgUploadData"
         :show-file-list="false"
         :on-success="handleLogoSuccess"
         :before-upload="beforeImgUpload">
@@ -28,6 +29,7 @@
       <el-upload
         action="/api/upload"
         :headers="uploadHeader"
+        :data="displayImgUploadData"
         list-type="picture-card"
         :on-preview="gameDisplayImgPreview"
         :on-success="gameDisplayImgSuccess"
@@ -73,6 +75,12 @@ export default {
       uploadHeader: {
         "self-token": getToken()
       },
+      logoImgUploadData: {
+        imgTp: 'gamelogo'
+      },
+      displayImgUploadData: {
+        imgTp: 'gameDisplayImg'
+      },
       imageUrl: '',
       dialogImageUrl: '',
       dialogVisible: false
@@ -95,6 +103,7 @@ export default {
       this.gameInfo.logoImg = URL.createObjectURL(file.raw);
     },
     beforeImgUpload(file) {
+
       // logo 上传之前判断是否符合图片的格式和尺寸
       const imgTp = (file.type === 'image/jpeg' || file.type === 'image/png')
       const imgSize = file.size / 1024 / 1024 < 2
@@ -108,8 +117,6 @@ export default {
       return imgTp && imgSize
     },
     gameDisplayImgRemove(file, fileList) {
-      // console.log(file, fileList);
-      // console.log(this.gameInfo.fileList)
       console.log(file.uid)
       for(let k in this.myArr) {
         console.log(k)

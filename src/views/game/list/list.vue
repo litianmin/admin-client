@@ -145,7 +145,7 @@
     methods: {
       createGame () {
         this.$router.push('/game/create')
-      },
+      }, 
       test(obj) {
         console.log(this.search_tp)
       }
