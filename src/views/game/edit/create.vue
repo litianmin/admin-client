@@ -60,6 +60,7 @@
 
 <script>
 import { getToken } from '@/utils/auth.js'
+import { CreateGame } from '@/api/game.js'
 export default {
   data() {
     return {
@@ -105,6 +106,10 @@ export default {
       for(let k in this.displayImgArr) {
         displayImgList.push(this.displayImgArr[k])
       }
+
+      // 提交数据
+      CreateGame(this.gameInfo.name, this.gameInfo.platform, this.gameInfo.logoImg, this.gameInfo.logoMiniImg, displayImgList, this.gameInfo.downloadLink, this.gameInfo.briefDesc)
+
       console.log(displayImgList)
     },
     handleLogoSuccess(res, file) {
