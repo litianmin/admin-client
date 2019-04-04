@@ -100,6 +100,21 @@ export default {
       // console.log('游戏简单描述：'+this.gameInfo.briefDesc)
       // console.log('submit!')
 
+      if(!!this.gameInfo.name === false) {
+        this.$message('游戏名称不能为空')
+        return
+      }
+
+      if(!!this.gameInfo.logoImg === false) {
+        this.$message('游戏logo不能为空')
+        return
+      }
+
+      if(!!this.gameInfo.displayImgArr === false) {
+        this.$message('展示内容不能为空')
+        return
+      }
+
       // 组装信息
       let gameInfoPost = {}
       let displayImgList = []
@@ -108,9 +123,12 @@ export default {
       }
 
       // 提交数据
-      CreateGame(this.gameInfo.name, this.gameInfo.platform, this.gameInfo.logoImg, this.gameInfo.logoMiniImg, displayImgList, this.gameInfo.downloadLink, this.gameInfo.briefDesc)
-
-      console.log(displayImgList)
+      CreateGame(this.gameInfo.name, this.gameInfo.platform, this.gameInfo.logoImg, this.gameInfo.logoMiniImg, displayImgList, this.gameInfo.downloadLink, this.gameInfo.briefDesc).then((data)=>{
+        if(data.code == 20000) {
+          this.$message('添加成功')
+          this.$router.push('/game')
+        }
+      })
     },
     handleLogoSuccess(res, file) {
 

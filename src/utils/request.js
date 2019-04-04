@@ -39,25 +39,28 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
 
-      // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
-      if (res.code === 4000) {
-        // MessageBox.confirm(
-        //   '你已被登出，可以取消继续留在该页面，或者重新登录',
-        //   '确定登出',
-        //   {
-        //     confirmButtonText: '重新登录',
-        //     cancelButtonText: '取消',
-        //     type: 'warning'
-        //   }
-        // ).then(() => {
-        //   store.dispatch('FedLogOut').then(() => {
-        //     location.reload() // 为了重新实例化vue-router对象 避免bug
-        //   })
+      // 40004:Token 过期了;
+      if (res.code === 40004) {
+        MessageBox.confirm(
+          '登陆已经过期，可以取消继续留在该页面，或者重新登录',
+          '确定登出',
+          {
+            confirmButtonText: '重新登录',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }
+        ).then(() => {
+          store.dispatch('FedLogOut').then(() => {
+            location.reload() // 为了重新实例化vue-router对象 避免bug
+          })
+        })
+        // store.dispatch('FedLogOut').then(() => {
+        //   location.reload() // 为了重新实例化vue-router对象 避免bug
         // })
       }
       return Promise.reject('error')
     } else {  // 如果没有错误，那么就把数据都返回去
-      return response.data
+      return res
     }
   },
   error => {
