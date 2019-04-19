@@ -110,7 +110,7 @@ export default {
         return
       }
 
-      if(!!this.gameInfo.displayImgArr === false) {
+      if(!!this.displayImgArr === false) {
         this.$message('展示内容不能为空')
         return
       }
