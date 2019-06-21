@@ -10,7 +10,6 @@
         <el-option label="手游" value="mobile"></el-option>
       </el-select>
     </el-form-item>
-
     <el-form-item label="游戏logo">
       <el-upload
         class="avatar-uploader"
@@ -25,7 +24,7 @@
       </el-upload>
     </el-form-item>
 
-    <el-form-item label="宣传图片">
+    <el-form-item label="宣传图片(640*320)">
       <el-upload
         action="/api/upload"
         :headers="uploadHeader"
@@ -121,6 +120,9 @@ export default {
       for(let k in this.displayImgArr) {
         displayImgList.push(this.displayImgArr[k])
       }
+
+      console.log(displayImgList) 
+      // return
 
       // 提交数据
       CreateGame(this.gameInfo.name, this.gameInfo.platform, this.gameInfo.logoImg, this.gameInfo.logoMiniImg, displayImgList, this.gameInfo.downloadLink, this.gameInfo.briefDesc).then((data)=>{
