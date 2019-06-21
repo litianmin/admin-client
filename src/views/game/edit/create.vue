@@ -6,10 +6,17 @@
 
     <el-form-item label="游戏类型">
       <el-select v-model="gameInfo.platform" placeholder="请选择游戏平台">
-        <el-option label="端游" value="pc"></el-option>
-        <el-option label="手游" value="mobile"></el-option>
+        <el-option label="端游" value="1"></el-option>
+        <el-option label="手游" value="2"></el-option>
       </el-select>
     </el-form-item>
+
+    <el-form-item label="游戏标签">
+      <el-checkbox-group v-model="checkboxGroup2" size="small">
+        <el-checkbox-button v-for="(item, index) in cities" :label="item" :key="index">{{item}}</el-checkbox-button>
+      </el-checkbox-group>
+    </el-form-item>
+
     <el-form-item label="游戏logo">
       <el-upload
         class="avatar-uploader"
@@ -65,12 +72,12 @@ export default {
     return {
       gameInfo: {
         name: '',
-        platform: '',
+        platform: '1',
         logo: '',
         logoImg: '',
         logoMiniImg: '',
         downloadLink: '',
-        briefDesc: ''
+        briefDesc: '',
       },
       displayImgArr: {},
       uploadHeader: {
@@ -84,7 +91,9 @@ export default {
       },
       imageUrl: '',
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      cities: ['上海', '北京', '广州', '深圳'],
+      checkboxGroup2: ['上海'],
     }
   },
   methods: {
