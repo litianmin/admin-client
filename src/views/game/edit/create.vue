@@ -12,8 +12,8 @@
     </el-form-item>
 
     <el-form-item label="游戏标签">
-      <el-checkbox-group v-model="checkboxGroup2" size="small">
-        <el-checkbox-button v-for="(item, index) in cities" :label="item" :key="index">{{item}}</el-checkbox-button>
+      <el-checkbox-group v-model="tabChoose" size="small" fill="#00bcd4">
+        <el-checkbox-button style="margin-left:.5rem; border-radius:.5rem;!importaint" v-for="(item, index) in gameTabs" :label="item.value" :key="index">{{item.name}}</el-checkbox-button>
       </el-checkbox-group>
     </el-form-item>
 
@@ -92,8 +92,17 @@ export default {
       imageUrl: '',
       dialogImageUrl: '',
       dialogVisible: false,
-      cities: ['上海', '北京', '广州', '深圳'],
-      checkboxGroup2: ['上海'],
+      gameTabs: [
+        {value: 3, name: '角色扮演'},
+        {value: 4, name: '3D'},
+        {value: 5, name: '动作'},
+      ],
+      tabChoose: [],
+    }
+  },
+  watch: {
+    tabChoose (val) {
+      console.log(val)
     }
   },
   methods: {
