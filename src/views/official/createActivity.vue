@@ -60,7 +60,7 @@
     </el-form-item>
 
     <el-form-item label="主要内容">
-      <el-input rows="5" type="textarea" class="textarea-width-one" size="medium" v-model="gameInfo.briefDesc"></el-input>
+      <div ref="editor" style=""></div>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">立即创建</el-button>
@@ -75,6 +75,7 @@
 <script>
 import { getToken } from '@/utils/auth.js'
 import { CreateGame } from '@/api/game.js'
+import E from 'wangeditor'
 export default {
   data() {
     return {
@@ -107,7 +108,17 @@ export default {
         {value: 5, name: '动作'},
       ],
       tabChoose: [],
+      editorContent: ''
     }
+  },
+  mounted () {
+    var editor = new E(this.$refs.editor)
+    editor.customConfig.onchange = (html) => {
+      this.editorContent = html
+    }
+    editor.customConfig.uploadImgServer = '/upload'
+    editor.create()
+    console.log('what 怀特 核力量')
   },
   watch: {
     tabChoose (val) {
