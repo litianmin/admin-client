@@ -62,6 +62,30 @@ export const constantRouterMap = [
     ]
   },
 
+  { // 官方活动
+    path: '/official',
+    component: Layout,
+    // redirect: '/game/list',
+    name: 'Official',
+    alwaysShow: true,
+    meta: { title: '官方活动', icon: 'official' },
+    children: [
+      {
+        path: 'list',
+        name: 'officialActivityList',
+        component: () => import('@/views/official/activityList'),
+        meta: { title: '活动列表', icon: 'official_activity_list' }
+      },
+      {
+        path: 'create',
+        name: 'officialActivityCreate',
+        component: () => import('@/views/official/createActivity'),
+        meta: { title: '创建活动', icon: 'create' },
+        hidden: true,
+      }
+    ]
+  },
+
   // {
   //   path: '/example',
   //   component: Layout,
