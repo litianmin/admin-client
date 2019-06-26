@@ -1,7 +1,7 @@
 <template>
   <el-form ref="form" label-width="80px" style="margin-top:1rem; padding: 1rem 2rem;">
     <el-form-item label="活动标题">
-      <el-input clearable v-model="Title" class="input-width-one"></el-input>
+      <el-input clearable v-model="Title" class="input-width-one" placeholder="不能超过25个字符" maxlength="25"></el-input>
     </el-form-item>
 
     <el-form-item label="活动类型">
@@ -20,29 +20,19 @@
       </el-date-picker>
     </el-form-item>
 
+    <!-- BEGIN 活动选址 -->
     <el-form-item label="活动地点">
       <svg-icon icon-class="locate" style="font-size:20px;" />
+      <span style="font-size:12px; color:#757575;">{{ Venue.addr }}</span>
 
-      <!-- <div class="amap-page-container">
-        <el-amap-search-box class="search-box" :search-option="searchOption" :on-search-result="onSearchResult"></el-amap-search-box>
-        <el-amap vid="amapDemo" :center="mapCenter" :zoom="12" class="amap-demo">
-          <el-amap-marker v-for="marker in markers" :position="marker" ></el-amap-marker>
-        </el-amap>
-      </div> -->
-
-
-  <!-- <div class="test" style="width:600px; height:400px;">
-    <div id="container" style="width:600px; height:400px;"></div>
-  </div> -->
-
-
-   <div id="container" style="width:600px; height:400px;" tabindex="0"></div>
-   <div id="pickerBox">
-       <input id="pickerInput" placeholder="输入关键字选取地点" />
-       <div id="poiInfo"></div>
-   </div>
-
+      <div id="container" style="width:650px; height:450px; position:relative;" tabindex="0">
+        <div id="pickerBox" style="position:absolute; top:10px; right:20px; z-index:999;">
+            <input id="pickerInput" style="width:300px; border-radius:.3rem; padding:.5rem; border:1px solid #009688;" placeholder="输入关键字选取地点" />
+            <div id="poiInfo"></div>
+        </div>
+      </div>
     </el-form-item>
+    <!-- END 活动选址 -->
 
 
     <el-form-item label="宣传图片">
@@ -52,36 +42,23 @@
         :headers="uploadHeader"
         :data="logoImgUploadData"
         :show-file-list="false"
-        :on-success="handleLogoSuccess"
+        :on-success="handleImgUploadSuccess"
         :before-upload="beforeImgUpload">
-        <img v-if="gameInfo.logoImg" :src="gameInfo.logo" class="avatar">
+        <img v-if="DisplayImg" :src="DisplayImg" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
 
-    <!-- <el-form-item label="宣传图片(640*320)">
-      <el-upload
-        action="/api/upload"
-        :headers="uploadHeader"
-        :data="displayImgUploadData"
-        list-type="picture-card"
-        :on-preview="gameDisplayImgPreview"
-        :on-success="gameDisplayImgSuccess"
-        :on-remove="gameDisplayImgRemove">
-        <i class="el-icon-plus"></i>
-      </el-upload>
-      <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
-    </el-form-item> -->
-
     <el-form-item label="招募人数">
-      <el-input clearable v-model="gameInfo.name" class="input-width-one"></el-input>
+      <el-input clearable v-model="RecruitNumb" class="input-width-one" placeholder="请输入招募人数"></el-input>
     </el-form-item>
 
+    <!-- BEGIN 详细内容编辑 -->
     <el-form-item label="主要内容">
-      <div ref="editor" style=""></div>
+      <div ref="editor" style="width:65rem;"></div>
     </el-form-item>
+
+
     <el-form-item>
       <el-button type="primary" @click="onSubmit">立即创建</el-button>
       <el-button>取消</el-button>
@@ -101,212 +78,157 @@ import mymap from '@/assets/js/AMap.js'
 
 export default {
   data() {
-     let self = this;
     return {
       Title: '',
       Type: '1',
       Time: [new Date(), new Date()],
-
-      markers: [
-
-      ],
-      searchOption: {
-        citylimit: false
+      Venue: {
+        addr: '',
+        lng: 0,
+        lat: 0,
+        name: ''
+      }, 
+      DisplayImgObj: {
+        originImg: '',
+        miniImg: ''
       },
-      mapCenter: [121.59996, 31.197646],
+      DisplayImg: '',
+      RecruitNumb: '',
 
-
-      value1: [new Date(), new Date()],
-      gameInfo: {
-        name: '',
-        platform: '1',
-        logo: '',
-        logoImg: '',
-        logoMiniImg: '',
-        downloadLink: '',
-        briefDesc: '',
-      },
-      displayImgArr: {},
       uploadHeader: {
         "self-token": getToken()
       },
       logoImgUploadData: {
-        imgTp: 'gamelogo'
+        imgTp: 'officialActivity'
       },
-      displayImgUploadData: {
-        imgTp: 'gameDisplayImg'
-      },
-      imageUrl: '',
-      dialogImageUrl: '',
-      dialogVisible: false,
-      gameTabs: [
-        {value: 3, name: '角色扮演'},
-        {value: 4, name: '3D'},
-        {value: 5, name: '动作'},
-      ],
-      tabChoose: [],
-      editorContent: '',
 
-      map: null
+      EditorContent: '',
 
     }
   },
   mounted () {
-    var editor = new E(this.$refs.editor)
+    let newThis = this
+
+    // 创建富文本框
+    let editor = new E(this.$refs.editor)
     editor.customConfig.onchange = (html) => {
-      this.editorContent = html
+      this.EditorContent = html
     }
     editor.customConfig.uploadImgServer = '/upload'
+
+    editor.customConfig.debug = true
+
     editor.create()
 
 
 
-    // let that = this
-    // mymap.MapLoader().then(AMap => {
-    //   console.log('地图加载成功')
-    //   that.map = new AMap.Map('container', {
-    //     center: [117.000923, 36.675807],
-    //     zoom: 11
-    //   })
-    // }, e => {
-    //   console.log('地图加载失败' ,e)
-    // })
-
-
-    var map = new AMap.Map('container', {
+    // 创建一个高德地图
+    let map = new AMap.Map('container', {
       zoom: 10
-    });
+    })
 
     AMapUI.loadUI(['misc/PoiPicker'], function(PoiPicker) {
 
-        var poiPicker = new PoiPicker({
+        let poiPicker = new PoiPicker({
             //city:'北京',
             input: 'pickerInput'
-        });
+        })
 
-        //初始化poiPicker
-        mymap.poiPickerReady(poiPicker, map);
-    });
+        //初始化poiPicker, 并且指定处理选择地址后的函数
+        mymap.poiPickerReady(poiPicker, map, newThis.dealwithChooseAddr)
+    })
 
-  },
-  watch: {
-    tabChoose (val) {
-      console.log(val)
-    }
   },
   methods: {
     onSubmit() {
       // 提交游戏基本信息
-      // console.log('游戏名称：'+this.gameInfo.name)
-      // console.log('游戏平台：'+this.gameInfo.platform)
-      // console.log('游戏logo原图：'+this.gameInfo.logoImg)
-      // console.log('游戏logo缩略图：'+this.gameInfo.logoMiniImg)
-      // console.log('游戏展示图：'+this.displayImgArr)
-      // console.log('游戏下载链接：'+this.gameInfo.downloadLink)
-      // console.log('游戏简单描述：'+this.gameInfo.briefDesc)
-      // console.log('submit!')
+      let title = this.Title
+      let time = this.Time
+      let venue = this.Venue
+      let displayImgObj = this.DisplayImgObj
+      let recruitNumb = this.RecruitNumb
+      let detail = this.EditorContent
 
-      if(!!this.gameInfo.name === false) {
-        this.$message('游戏名称不能为空')
+      if(title.length == 0) {
+        this.$message('活动标题不能为空')
         return
       }
 
-      if(!!this.gameInfo.logoImg === false) {
-        this.$message('游戏logo不能为空')
+      let activityBeginTime = parseInt(time[0].getTime() / 1000)  // 活动开始时间
+      let activityEndTime = parseInt(time[1].getTime() / 1000)  // 活动结束时间
+
+      if(venue.name == '') {
+        this.$message('活动地址不能为空')
         return
       }
 
-      if(!!this.displayImgArr === false) {
-        this.$message('展示内容不能为空')
+      if(displayImgObj.originImg == '') {
+        this.$message('展示图片不能为空')
         return
       }
 
-      // 组装信息
-      let gameInfoPost = {}
-      let displayImgList = []
-      for(let k in this.displayImgArr) {
-        displayImgList.push(this.displayImgArr[k])
+      if(detail.length == 0) {
+        this.$message('活动详细内容不能为空')
+        return
       }
 
-      console.log(displayImgList) 
-      // return
-
-      // 提交数据
-      CreateGame(this.gameInfo.name, this.gameInfo.platform, this.gameInfo.logoImg, this.gameInfo.logoMiniImg, displayImgList, this.gameInfo.downloadLink, this.gameInfo.briefDesc).then((data)=>{
-        if(data.code == 20000) {
-          this.$message('添加成功')
-          this.$router.push('/game')
-        }
-      })
     },
-    handleLogoSuccess(res, file) {
+
+
+    handleImgUploadSuccess(res, file) {
 
       // 结果返回代码和图片链接
       if(res.code == 20000) { // 上传成功，保存图片
-        this.gameInfo.logoImg = res.origin_img
-        this.gameInfo.logoMiniImg = res.mini_img
+        this.DisplayImgObj.originImg = res.origin_img
+        this.DisplayImgObj.miniImg = res.mini_img
       }
-      this.gameInfo.logo = URL.createObjectURL(file.raw);
+      this.DisplayImg = URL.createObjectURL(file.raw);
     },
-    beforeImgUpload(file) {
+
+
+    beforeImgUpload(file) { // 图片上传之前做判断
 
       // logo 上传之前判断是否符合图片的格式和尺寸
       const imgTp = (file.type === 'image/jpeg' || file.type === 'image/png')
-      const imgSize = file.size / 1024 / 1024 < 2
+      const imgSize = file.size / 1024 / 1024 < 5
 
       if (!imgTp) {
-        this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
+        this.$message.error('上传图片只能是 JPG/PNG 格式!')
       }
       if (!imgSize) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error('上传图片大小不能超过 5MB!')
       }
       return imgTp && imgSize
     },
-    gameDisplayImgRemove(file, fileList) {
-      console.log(file.uid)
-      for(let k in this.displayImgArr) {
-        console.log(k)
-        if(file.uid == k) {
-          delete this.displayImgArr[k]
-        }
-      }
-      console.log(this.displayImgArr)
-    },
-    gameDisplayImgPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
-    },
-    gameDisplayImgSuccess(res, file) {
-      this.displayImgArr[file.uid] = res.mini_img
-      console.log(this.displayImgArr)
-    },
-
-        // addMarker: function() {
-        //   let lng = 121.5 + Math.round(Math.random() * 1000) / 10000
-        //   let lat = 31.197646 + Math.round(Math.random() * 500) / 10000
-        //   this.markers.push([lng, lat])
-        // },
-        // onSearchResult(pois) {
-        //   console.log(pois)
-        //   return
-        //   let latSum = 0
-        //   let lngSum = 0
-        //   if (pois.length > 0) {
-        //     pois.forEach(poi => {
-        //       let {lng, lat} = poi
-        //       lngSum += lng
-        //       latSum += lat
-        //       this.markers.push([poi.lng, poi.lat])
-        //     })
-        //     let center = {
-        //       lng: lngSum / pois.length,
-        //       lat: latSum / pois.length
-        //     }
-        //     this.mapCenter = [center.lng, center.lat]
-        //   }
-        // },
 
 
+    // gameDisplayImgRemove(file, fileList) {
+    //   console.log(file.uid)
+    //   for(let k in this.displayImgArr) {
+    //     console.log(k)
+    //     if(file.uid == k) {
+    //       delete this.displayImgArr[k]
+    //     }
+    //   }
+    //   console.log(this.displayImgArr)
+    // },
+    // gameDisplayImgPreview(file) {
+    //   this.dialogImageUrl = file.url
+    //   this.dialogVisible = true
+    // },
+    // gameDisplayImgSuccess(res, file) {
+    //   this.displayImgArr[file.uid] = res.mini_img
+    //   console.log(this.displayImgArr)
+    // },
+
+    dealwithChooseAddr (addrObj) {  // 选择地址后做处理
+      this.Venue.addr = addrObj.address
+      this.Venue.name = addrObj.name
+      let obj = addrObj.location.split(',') 
+      this.Venue.lng = Number(obj[0])
+      this.Venue.lat = Number(obj[1])
+      console.log(this.Venue)
+    },
   }
 }
 </script>
