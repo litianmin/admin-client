@@ -1,18 +1,18 @@
 <template>
-  <el-form ref="form" :model="gameInfo" label-width="80px" style="margin-top:1rem; padding: 1rem 2rem;">
+  <el-form ref="form" label-width="80px" style="margin-top:1rem; padding: 1rem 2rem;">
     <el-form-item label="活动标题">
-      <el-input clearable v-model="gameInfo.name" class="input-width-one"></el-input>
+      <el-input clearable v-model="Title" class="input-width-one"></el-input>
     </el-form-item>
 
     <el-form-item label="活动类型">
-      <el-select v-model="gameInfo.platform" placeholder="请选择游戏平台">
+      <el-select v-model="Type" placeholder="请选择游戏平台">
         <el-option label="官方组队" value="1"></el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item label="活动时间">
       <el-date-picker
-        v-model="value1"
+        v-model="Time"
         type="datetimerange"
         range-separator="至"
         start-placeholder="开始日期"
@@ -21,7 +21,27 @@
     </el-form-item>
 
     <el-form-item label="活动地点">
-      这个待会再做
+      <svg-icon icon-class="locate" style="font-size:20px;" />
+
+      <!-- <div class="amap-page-container">
+        <el-amap-search-box class="search-box" :search-option="searchOption" :on-search-result="onSearchResult"></el-amap-search-box>
+        <el-amap vid="amapDemo" :center="mapCenter" :zoom="12" class="amap-demo">
+          <el-amap-marker v-for="marker in markers" :position="marker" ></el-amap-marker>
+        </el-amap>
+      </div> -->
+
+
+  <!-- <div class="test" style="width:600px; height:400px;">
+    <div id="container" style="width:600px; height:400px;"></div>
+  </div> -->
+
+
+   <div id="container" style="width:600px; height:400px;" tabindex="0"></div>
+   <div id="pickerBox">
+       <input id="pickerInput" placeholder="输入关键字选取地点" />
+       <div id="poiInfo"></div>
+   </div>
+
     </el-form-item>
 
 
@@ -76,9 +96,26 @@
 import { getToken } from '@/utils/auth.js'
 import { CreateGame } from '@/api/game.js'
 import E from 'wangeditor'
+
+import mymap from '@/assets/js/AMap.js'
+
 export default {
   data() {
+     let self = this;
     return {
+      Title: '',
+      Type: '1',
+      Time: [new Date(), new Date()],
+
+      markers: [
+
+      ],
+      searchOption: {
+        citylimit: false
+      },
+      mapCenter: [121.59996, 31.197646],
+
+
       value1: [new Date(), new Date()],
       gameInfo: {
         name: '',
@@ -108,7 +145,10 @@ export default {
         {value: 5, name: '动作'},
       ],
       tabChoose: [],
-      editorContent: ''
+      editorContent: '',
+
+      map: null
+
     }
   },
   mounted () {
@@ -118,7 +158,36 @@ export default {
     }
     editor.customConfig.uploadImgServer = '/upload'
     editor.create()
-    console.log('what 怀特 核力量')
+
+
+
+    // let that = this
+    // mymap.MapLoader().then(AMap => {
+    //   console.log('地图加载成功')
+    //   that.map = new AMap.Map('container', {
+    //     center: [117.000923, 36.675807],
+    //     zoom: 11
+    //   })
+    // }, e => {
+    //   console.log('地图加载失败' ,e)
+    // })
+
+
+    var map = new AMap.Map('container', {
+      zoom: 10
+    });
+
+    AMapUI.loadUI(['misc/PoiPicker'], function(PoiPicker) {
+
+        var poiPicker = new PoiPicker({
+            //city:'北京',
+            input: 'pickerInput'
+        });
+
+        //初始化poiPicker
+        mymap.poiPickerReady(poiPicker, map);
+    });
+
   },
   watch: {
     tabChoose (val) {
@@ -210,7 +279,33 @@ export default {
     gameDisplayImgSuccess(res, file) {
       this.displayImgArr[file.uid] = res.mini_img
       console.log(this.displayImgArr)
-    }
+    },
+
+        // addMarker: function() {
+        //   let lng = 121.5 + Math.round(Math.random() * 1000) / 10000
+        //   let lat = 31.197646 + Math.round(Math.random() * 500) / 10000
+        //   this.markers.push([lng, lat])
+        // },
+        // onSearchResult(pois) {
+        //   console.log(pois)
+        //   return
+        //   let latSum = 0
+        //   let lngSum = 0
+        //   if (pois.length > 0) {
+        //     pois.forEach(poi => {
+        //       let {lng, lat} = poi
+        //       lngSum += lng
+        //       latSum += lat
+        //       this.markers.push([poi.lng, poi.lat])
+        //     })
+        //     let center = {
+        //       lng: lngSum / pois.length,
+        //       lat: latSum / pois.length
+        //     }
+        //     this.mapCenter = [center.lng, center.lat]
+        //   }
+        // },
+
 
   }
 }
@@ -279,6 +374,24 @@ export default {
     margin: 0 8px 8px 0;
     display: inline-block;
 }
+
+    /* .amap-demo {
+      height: 300px;
+    } */
+
+    .search-box {
+      position: absolute;
+      top: 55px;
+      left: 20px;
+    }
+
+    .amap-page-container {
+      margin-top:-2rem;
+      margin-bottom:4rem;
+      width:600px;;
+      height:400px;
+      position: relative;
+    }
 
 </style>
 
