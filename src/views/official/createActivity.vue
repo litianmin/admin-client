@@ -88,10 +88,9 @@ export default {
         lat: 0,
         name: ''
       }, 
-      DisplayImgObj: {
-        originImg: '',
-        miniImg: ''
-      },
+      DisplayImgForSave: '',
+
+
       DisplayImg: '',
       RecruitNumb: '',
 
@@ -114,7 +113,14 @@ export default {
     editor.customConfig.onchange = (html) => {
       this.EditorContent = html
     }
-    editor.customConfig.uploadImgServer = '/upload'
+    editor.customConfig.uploadImgServer = '/api/upload'
+    editor.customConfig.uploadImgParams = {
+      imgTp: 'officialActivityDetail'
+    }
+    editor.customConfig.uploadImgHeaders = {
+      'self-token': getToken()
+    }
+    editor.customConfig.uploadImgMaxLength = 5
 
     editor.customConfig.debug = true
 
@@ -141,11 +147,11 @@ export default {
   },
   methods: {
     onSubmit() {
+      
       // 提交游戏基本信息
       let title = this.Title
       let time = this.Time
       let venue = this.Venue
-      let displayImgObj = this.DisplayImgObj
       let recruitNumb = this.RecruitNumb
       let detail = this.EditorContent
 
@@ -162,7 +168,7 @@ export default {
         return
       }
 
-      if(displayImgObj.originImg == '') {
+      if(this.DisplayImgForSave == '') {
         this.$message('展示图片不能为空')
         return
       }
@@ -175,14 +181,15 @@ export default {
     },
 
 
-    handleImgUploadSuccess(res, file) {
-
+    handleImgUploadSuccess(res, file) { // 上传图片成功处理
+      console.log(res)
       // 结果返回代码和图片链接
       if(res.code == 20000) { // 上传成功，保存图片
-        this.DisplayImgObj.originImg = res.origin_img
-        this.DisplayImgObj.miniImg = res.mini_img
+        this.DisplayImgForSave = res.msg
+        this.DisplayImg = URL.createObjectURL(file.raw);
+      }else{
+        this.$message(res.msg)
       }
-      this.DisplayImg = URL.createObjectURL(file.raw);
     },
 
 
