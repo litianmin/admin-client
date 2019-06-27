@@ -59,7 +59,8 @@ service.interceptors.response.use(
         //   location.reload() // 为了重新实例化vue-router对象 避免bug
         // })
       }
-      return Promise.reject('error')
+      // return Promise.reject('error')
+      return res
     } else {  // 如果没有错误，那么就把数据都返回去
       return res
     }

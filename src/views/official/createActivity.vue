@@ -50,7 +50,8 @@
     </el-form-item>
 
     <el-form-item label="招募人数">
-      <el-input clearable v-model="RecruitNumb" class="input-width-one" placeholder="请输入招募人数"></el-input>
+      <el-input-number v-model="RecruitNumb" controls-position="right" :min="1" :max="100"></el-input-number>
+      <!-- <el-input clearable v-model="RecruitNumb" class="input-width-one" placeholder="请输入招募人数"></el-input> -->
     </el-form-item>
 
     <!-- BEGIN 详细内容编辑 -->
@@ -71,7 +72,7 @@
 
 <script>
 import { getToken } from '@/utils/auth.js'
-import { CreateGame } from '@/api/game.js'
+import newApi from '@/api/official.js'
 import E from 'wangeditor'
 
 import mymap from '@/assets/js/AMap.js'
@@ -120,13 +121,15 @@ export default {
     editor.customConfig.uploadImgHeaders = {
       'self-token': getToken()
     }
+    editor.customConfig.uploadFileName = 'file'
+
     editor.customConfig.uploadImgMaxLength = 5
 
     editor.customConfig.debug = true
 
     editor.create()
 
-
+    console.log(getToken())
 
     // 创建一个高德地图
     let map = new AMap.Map('container', {
@@ -178,6 +181,21 @@ export default {
         return
       }
 
+      let data = {
+        title: title,
+        type: Number(this.Type),
+        beginTime: activityBeginTime,
+        endTime: activityEndTime,
+        venue: this.Venue,
+        displayImg: this.DisplayImgForSave,
+        recruitNumb,
+        cont: detail,
+      }
+
+      newApi.CreateOfficialActivity(data).then((resp)=>{
+        console.log(resp)
+      })
+      
     },
 
 
@@ -208,33 +226,12 @@ export default {
       return imgTp && imgSize
     },
 
-
-    // gameDisplayImgRemove(file, fileList) {
-    //   console.log(file.uid)
-    //   for(let k in this.displayImgArr) {
-    //     console.log(k)
-    //     if(file.uid == k) {
-    //       delete this.displayImgArr[k]
-    //     }
-    //   }
-    //   console.log(this.displayImgArr)
-    // },
-    // gameDisplayImgPreview(file) {
-    //   this.dialogImageUrl = file.url
-    //   this.dialogVisible = true
-    // },
-    // gameDisplayImgSuccess(res, file) {
-    //   this.displayImgArr[file.uid] = res.mini_img
-    //   console.log(this.displayImgArr)
-    // },
-
     dealwithChooseAddr (addrObj) {  // 选择地址后做处理
       this.Venue.addr = addrObj.address
       this.Venue.name = addrObj.name
       let obj = addrObj.location.split(',') 
       this.Venue.lng = Number(obj[0])
       this.Venue.lat = Number(obj[1])
-      console.log(this.Venue)
     },
   }
 }
