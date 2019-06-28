@@ -86,6 +86,30 @@ export const constantRouterMap = [
     ]
   },
 
+  { // 美文话题
+    path: '/article',
+    component: Layout,
+    // redirect: '/game/list',
+    name: 'article',
+    alwaysShow: true,
+    meta: { title: '美文话题', icon: 'official' },
+    children: [
+      {
+        path: 'list',
+        name: 'articleList',
+        component: () => import('@/views/article/articleList'),
+        meta: { title: '文章列表', icon: 'official_activity_list' }
+      },
+      {
+        path: 'create',
+        name: 'newArticle',
+        component: () => import('@/views/article/newArticle'),
+        meta: { title: '新增文章', icon: 'create' },
+        hidden: true,
+      }
+    ]
+  },
+
   // {
   //   path: '/example',
   //   component: Layout,
