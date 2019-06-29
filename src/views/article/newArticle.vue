@@ -7,7 +7,7 @@
     <el-form-item label="文章类型">
       <el-select v-model="Type" placeholder="请选择类型">
         <el-option label="话 题" value="1"></el-option>
-        <el-option label="美 文" value="1"></el-option>
+        <el-option label="美 文" value="2"></el-option>
       </el-select>
     </el-form-item>
 
@@ -15,7 +15,7 @@
       <el-date-picker
         v-model="ShowTime"
         type="datetimerange"
-        range-separator="至"
+        range-separator="-"
         start-placeholder="开始日期"
         end-placeholder="结束日期">
       </el-date-picker>
@@ -53,7 +53,7 @@
 
 <script>
 import { getToken } from '@/utils/auth.js'
-import newApi from '@/api/official.js'
+import newApi from '@/api/article.js'
 import E from 'wangeditor'
 
 export default {
@@ -134,7 +134,7 @@ export default {
         cont: detail,
       }
 
-      newApi.CreateOfficialActivity(data).then((resp)=>{
+      newApi.NewArticle(data).then((resp)=>{
         console.log(resp)
       })
       
@@ -253,6 +253,16 @@ export default {
       height:400px;
       position: relative;
     }
-
+.el-picker-panel {
+    color: #606266;
+    border: 1px solid #e4e7ed;
+    -webkit-box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    background: #fff;
+    border-radius: 4px;
+    line-height: 30px;
+    margin: 5px 0;
+    z-index:20000!important;
+}
 </style>
 
