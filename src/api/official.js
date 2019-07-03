@@ -19,7 +19,7 @@ import request from '@/utils/request'
 export default {
   CreateOfficialActivity (data) {
     return request({
-      url: '/officialActivity/create',
+      url: '/activity/create',
       method: 'post',
       data: data
     })
