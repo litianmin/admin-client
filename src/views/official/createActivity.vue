@@ -181,6 +181,9 @@ export default {
         return
       }
 
+      console.log(this.Venue)
+
+
       let data = {
         title: title,
         type: Number(this.Type),
