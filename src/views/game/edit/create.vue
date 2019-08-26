@@ -20,7 +20,7 @@
     <el-form-item label="游戏logo">
       <el-upload
         class="avatar-uploader"
-        action="/api/upload"
+        action="/adminapi/upload"
         :headers="uploadHeader"
         :data="logoImgUploadData"
         :show-file-list="false"
@@ -33,7 +33,7 @@
 
     <el-form-item label="宣传图片(640*320)">
       <el-upload
-        action="/api/upload"
+        action="/adminapi/upload"
         :headers="uploadHeader"
         :data="displayImgUploadData"
         list-type="picture-card"

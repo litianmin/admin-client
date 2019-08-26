@@ -24,7 +24,7 @@
     <el-form-item label="展示图片">
       <el-upload
         class="avatar-uploader"
-        action="/api/upload"
+        action="/adminapi/upload"
         :headers="uploadHeader"
         :data="ImgUploadData"
         :show-file-list="false"
@@ -83,7 +83,7 @@ export default {
     editor.customConfig.onchange = (html) => {
       this.EditorContent = html
     }
-    editor.customConfig.uploadImgServer = '/api/upload'
+    editor.customConfig.uploadImgServer = '/adminapi/upload'
     editor.customConfig.uploadImgParams = {
       imgTp: 'articleDetail'
     }
