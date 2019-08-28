@@ -46,9 +46,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll
     },
     proxy: {
-      '/api': {
+      '/adminapi': {
         target: 'http://localhost:9999',
-        pathRewrite: {'^/api' : ''}
+        pathRewrite: {'^/adminapi' : ''}
       }
     }
 
