@@ -108,14 +108,6 @@ export default {
   methods: {
     onSubmit() {
       // 提交游戏基本信息
-      // console.log('游戏名称：'+this.gameInfo.name)
-      // console.log('游戏平台：'+this.gameInfo.platform)
-      // console.log('游戏logo原图：'+this.gameInfo.logoImg)
-      // console.log('游戏logo缩略图：'+this.gameInfo.logoMiniImg)
-      // console.log('游戏展示图：'+this.displayImgArr)
-      // console.log('游戏下载链接：'+this.gameInfo.downloadLink)
-      // console.log('游戏简单描述：'+this.gameInfo.briefDesc)
-      // console.log('submit!')
 
       if(!!this.gameInfo.name === false) {
         this.$message('游戏名称不能为空')
@@ -144,6 +136,7 @@ export default {
 
       // 提交数据
       CreateGame(this.gameInfo.name, this.gameInfo.platform, this.gameInfo.logoImg, this.gameInfo.logoMiniImg, displayImgList, this.gameInfo.downloadLink, this.gameInfo.briefDesc).then((data)=>{
+        console.log(data)
         if(data.code == 20000) {
           this.$message('添加成功')
           this.$router.push('/game')
